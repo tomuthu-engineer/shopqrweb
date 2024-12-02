@@ -13,19 +13,33 @@ interface Product {
 
 interface ProductCardProps {
   product: Product;
+  onAddToCart: (product: Product) => void;
+  onRemoveFromCart: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  onAddToCart,
+  onRemoveFromCart,
+}) => {
   const [quantity, setQuantity] = useState(0);
 
-  const handleBuy = () => setQuantity(quantity + 1);
+  const handleBuy = () => {
+    const newQuantity = quantity + 1;
+    setQuantity(newQuantity);
+    onAddToCart(product);
+  };
+
   const handleRemoveFromCart = () => {
-    if (quantity > 0) setQuantity(quantity - 1);
+    if (quantity > 0) {
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+      onRemoveFromCart(product);
+    }
   };
 
   return (
     <div className="p-4 w-full bg-white shadow-lg hover:shadow-xl rounded-lg transition-shadow duration-300 ease-in-out flex items-center gap-4">
-      {/* Product Image */}
       <div className="relative w-24 h-24 flex-shrink-0">
         <Image
           src={product.image}
@@ -36,13 +50,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         />
       </div>
 
-      {/* Product Info */}
       <div className="flex-1">
         <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
         <p className="text-xl font-bold text-gray-800">₹{product.price}</p>
       </div>
 
-      {/* Buy Button */}
       <div className="flex items-center">
         {quantity === 0 ? (
           <button
